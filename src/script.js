@@ -1,4 +1,5 @@
 import "./script/main";
+import "./script/timer";
 
 import "./scss/index.scss";
 
