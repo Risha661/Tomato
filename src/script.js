@@ -1,6 +1,6 @@
 import "./script/main";
 import "./script/timer";
-
+import "./script/render";
 import "./scss/index.scss";
 
 class Realize {
@@ -26,8 +26,3 @@ class Realize {
 }
 
 const timer = new Realize("New timer");
-
-console.log(timer.generateRandomId());
-console.log(timer.id);
-console.log(timer.changeName("Новый таймер"));
-console.log(timer.changeCounter());

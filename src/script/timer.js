@@ -1,14 +1,5 @@
-// export class Task {
-//     constructor(id, name) {
-//         this.id = id;
-//         this.name = name;
-//         this.counter = 0;
-//     }
+import "./render";
 
-//     incrementCounter() {
-//         this.counter += 1;
-//     }
-// }
 export class Task {
     constructor(text) {
         this.id = this.generateId();
@@ -122,27 +113,27 @@ export class Tomato {
     }
 }
 
-const task1 = new Task("Задача 1");
-const task2 = new Task("Задача 2");
-const task3 = new Task("Задача 3");
-console.log(task1, task2, task3);
+// const task1 = new Task("Задача 1");
+// const task2 = new Task("Задача 2");
+// const task3 = new Task("Задача 3");
+// console.log(task1, task2, task3);
 
-const importantTask = new ImportantTask("Важная задача", "Высокая");
-console.log(importantTask);
-const standartTask = new StandartTask("Обычная задача");
-console.log(standartTask);
-const unimportantTask = new UnimportantTask("Неважная задача");
-console.log(unimportantTask);
+// const importantTask = new ImportantTask("Важная задача", "Высокая");
+// console.log(importantTask);
+// const standartTask = new StandartTask("Обычная задача");
+// console.log(standartTask);
+// const unimportantTask = new UnimportantTask("Неважная задача");
+// console.log(unimportantTask);
 
-const tomato1 = new Tomato();
-const tomato2 = new Tomato();
+// const tomato1 = new Tomato();
+// const tomato2 = new Tomato();
 
-console.log(tomato1, tomato2);
-console.log(tomato1 === tomato2);
+// console.log(tomato1, tomato2);
+// console.log(tomato1 === tomato2);
 
-tomato1.addTask(task1);
-tomato1.addTask(task2);
-tomato1.addTask(task3);
+// tomato1.addTask(task1);
+// tomato1.addTask(task2);
+// tomato1.addTask(task3);
 
-tomato1.activateTask(task1.id);
-tomato1.startTask();
+// tomato1.activateTask(task1.id);
+// tomato1.startTask();
