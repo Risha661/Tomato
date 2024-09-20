@@ -1,5 +1,6 @@
 // import "./view";
 import "./timer";
+import {Controller} from "./controller";
 
 export const imp = ["default", "important", "so-so"];
 export let count = 0;
@@ -31,12 +32,11 @@ export class View {
         if (this.taskText) {
             console.log(`Задача: ${this.taskText}`);
             this.tasks.push(`Задача: ${this.taskText}, Приоритетность: ${statusTask}`);
-            this.data.push(this.tasks);
             console.log(this.tasks);
-            // this.controller.addTask(this.taskText, this.statusTask); // Используем статус важности
+            this.controller.addTask(this.taskText, this.statusTask);// внедряем в хранение localStorage данные
             this.taskInput.value = "";
         } else {
-            console.log("Введите текст задачи.");
+            ("Введите текст задачи.");
         }
     }
 
@@ -47,7 +47,7 @@ export class View {
     }
 }
 
-const view = new View(document.getElementById("app"));
+const view = new View(document.getElementById("app"), controller);
 
 document.querySelector(".button-importance").addEventListener("click", ({target}) => {
     count += 1;
