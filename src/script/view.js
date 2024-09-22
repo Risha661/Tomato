@@ -1,5 +1,5 @@
-// import "./view";
 import "./timer";
+// import { Controller } from "./controller";
 
 export const imp = ["default", "important", "so-so"];
 export let count = 0;
@@ -31,12 +31,11 @@ export class View {
         if (this.taskText) {
             console.log(`Задача: ${this.taskText}`);
             this.tasks.push(`Задача: ${this.taskText}, Приоритетность: ${statusTask}`);
-            this.data.push(this.tasks);
             console.log(this.tasks);
-            // this.controller.addTask(this.taskText, this.statusTask); // Используем статус важности
+            this.controller.addTask(this.taskText, statusTask);// внедряем в хранение localStorage данные
             this.taskInput.value = "";
         } else {
-            console.log("Введите текст задачи.");
+            ("Введите текст задачи.");
         }
     }
 
@@ -47,7 +46,32 @@ export class View {
     }
 }
 
-const view = new View(document.getElementById("app"));
+export class Controller {
+    constructor(view) {
+        this.view = view;
+        this.tasks = this.loadTask();
+    }
+    loadTask() {
+        const taskJson = localStorage.getItem("tasks");
+        return taskJson ? JSON.parse(taskJson) : [];
+    }
+    saveTask() {
+        localStorage.setItem("tasks", JSON.stringify(this.tasks)); // запись новых задач в локал
+    }
+    addTask(taskText, statusTask) {
+        const newTask = {text: taskText, status: statusTask};
+        if (!this.tasks) {
+            this.tasks = [];
+        }
+        this.tasks.push(newTask);
+        this.saveTask();
+    }
+}
+
+const controller = new Controller();
+controller.loadTask();
+console.log(controller.loadTask());
+const view = new View(document.getElementById("app"), controller);
 
 document.querySelector(".button-importance").addEventListener("click", ({target}) => {
     count += 1;
@@ -66,3 +90,5 @@ document.querySelector(".button-importance").addEventListener("click", ({target}
     }
     console.log(`Статус важности: ${statusTask}`);
 });
+
+
