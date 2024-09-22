@@ -1,5 +1,9 @@
 import "./timer";
+<<<<<<< HEAD
 // import { Controller } from "./controller";
+=======
+import {Controller} from "./controller";
+>>>>>>> 96a54809b0e287e74996646893781a2b4a7bfff1
 
 export const imp = ["default", "important", "so-so"];
 export let count = 0;
@@ -32,7 +36,11 @@ export class View {
             console.log(`Задача: ${this.taskText}`);
             this.tasks.push(`Задача: ${this.taskText}, Приоритетность: ${statusTask}`);
             console.log(this.tasks);
+<<<<<<< HEAD
             this.controller.addTask(this.taskText, statusTask);// внедряем в хранение localStorage данные
+=======
+            this.controller.addTask(this.taskText, this.statusTask);// внедряем в хранение localStorage данные
+>>>>>>> 96a54809b0e287e74996646893781a2b4a7bfff1
             this.taskInput.value = "";
         } else {
             ("Введите текст задачи.");
@@ -46,6 +54,7 @@ export class View {
     }
 }
 
+<<<<<<< HEAD
 export class Controller {
     constructor(view) {
         this.view = view;
@@ -71,6 +80,8 @@ export class Controller {
 const controller = new Controller();
 controller.loadTask();
 console.log(controller.loadTask());
+=======
+>>>>>>> 96a54809b0e287e74996646893781a2b4a7bfff1
 const view = new View(document.getElementById("app"), controller);
 
 document.querySelector(".button-importance").addEventListener("click", ({target}) => {
