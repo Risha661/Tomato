@@ -1,7 +1,10 @@
 import "./script/main";
 import "./script/timer";
+import "./script/renderTomato";
+import "./script/controller";
 import "./script/render";
 import "./scss/index.scss";
+
 
 class Realize {
     constructor(name, counter = 0) {
@@ -26,3 +29,4 @@ class Realize {
 }
 
 const timer = new Realize("New timer");
+

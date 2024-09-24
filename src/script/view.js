@@ -1,9 +1,5 @@
 import "./timer";
-<<<<<<< HEAD
-// import { Controller } from "./controller";
-=======
-import {Controller} from "./controller";
->>>>>>> 96a54809b0e287e74996646893781a2b4a7bfff1
+import "./renderTomato";
 
 export const imp = ["default", "important", "so-so"];
 export let count = 0;
@@ -24,8 +20,6 @@ export class View {
         this.data = [];
         this.tasks = [];
         console.log(this.tasks);
-
-
     }
 
     handleAddTask(event) {
@@ -36,11 +30,7 @@ export class View {
             console.log(`Задача: ${this.taskText}`);
             this.tasks.push(`Задача: ${this.taskText}, Приоритетность: ${statusTask}`);
             console.log(this.tasks);
-<<<<<<< HEAD
-            this.controller.addTask(this.taskText, statusTask);// внедряем в хранение localStorage данные
-=======
-            this.controller.addTask(this.taskText, this.statusTask);// внедряем в хранение localStorage данные
->>>>>>> 96a54809b0e287e74996646893781a2b4a7bfff1
+            this.controller.addTask(this.taskText, statusTask);
             this.taskInput.value = "";
         } else {
             ("Введите текст задачи.");
@@ -53,8 +43,6 @@ export class View {
         this.buttonElement = event.currentTarget;
     }
 }
-
-<<<<<<< HEAD
 export class Controller {
     constructor(view) {
         this.view = view;
@@ -65,7 +53,7 @@ export class Controller {
         return taskJson ? JSON.parse(taskJson) : [];
     }
     saveTask() {
-        localStorage.setItem("tasks", JSON.stringify(this.tasks)); // запись новых задач в локал
+        localStorage.setItem("tasks", JSON.stringify(this.tasks)); 
     }
     addTask(taskText, statusTask) {
         const newTask = {text: taskText, status: statusTask};
@@ -80,8 +68,6 @@ export class Controller {
 const controller = new Controller();
 controller.loadTask();
 console.log(controller.loadTask());
-=======
->>>>>>> 96a54809b0e287e74996646893781a2b4a7bfff1
 const view = new View(document.getElementById("app"), controller);
 
 document.querySelector(".button-importance").addEventListener("click", ({target}) => {
@@ -93,7 +79,7 @@ document.querySelector(".button-importance").addEventListener("click", ({target}
     for (let i = 0; i < imp.length; i++) {
         if (count === i) {
             target.classList.add(imp[i]);
-            statusTask = imp[i];
+            statusTask = imp[i]; 
             
         } else {
             target.classList.remove(imp[i]);
@@ -101,5 +87,3 @@ document.querySelector(".button-importance").addEventListener("click", ({target}
     }
     console.log(`Статус важности: ${statusTask}`);
 });
-
-
