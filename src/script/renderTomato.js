@@ -17,29 +17,40 @@ export class RenderTomato {
     clearTask() {
         setChildren(this.taskList, []);
     }
-
     renderTask() {
         this.tasks = this.controller.loadTask();
         console.log(this.tasks);
         this.clearTask();
 
         this.tasks.forEach((task, index) => {
-            const taskItem = el("li.tasks__item", 
+            // this.taskItem = document.createElement("li");
+            // this.taskItem.classList.add(".tasks__item");
+
+
+            this.taskItem = el("li.tasks__item", 
                 el("span.count-number", index + 1), 
                 el("button.tasks__text", task.text),
                 el("button.tasks__button")
             );
     
             if (task.status === "important") {
-                taskItem.classList.add("important");
+                this.taskItem.classList.add("important");
             } else if (task.status === "so-so") {
-                taskItem.classList.add("so-so");
+                this.taskItem.classList.add("so-so");
             } else {
-                taskItem.classList.add("default");
+                this.taskItem.classList.add("default");
             }
     
-            this.tasksList.appendChild(taskItem); 
+            this.taskList.appendChild(this.taskItem); 
         });
+    }
+    popupTaskMenu() {
+        this.popupMenu = el("div.popup.popup_active", 
+            el("button.popup__button.popup__edit-button", "Редактировать"), 
+            el("button.popup__button.popup__delete-button", "Удалить")
+        );
+
+        //вмонтировать в нужный контейнер по клику
     }
 }
 
