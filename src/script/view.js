@@ -19,7 +19,6 @@ export class View {
 
         this.data = [];
         this.tasks = [];
-        console.log(this.tasks);
     }
 
     handleAddTask(event) {

@@ -4,12 +4,14 @@ import { el, mount, setChildren } from 'redom';
 import { Controller } from './controller';
 
 export class RenderTomato {
-    constructor(container, controller) {
-        this.container = container;
-        this.controller = controller;
-        this.taskList = el("ul.tasks__list");
-        console.log(this.taskList);
-        mount(this.container, this.taskList);
+    constructor() {
+        this.controller = new Controller();
+        this.taskList = document.querySelector(".tasks__list");
+
+        if (!this.taskList) {
+            console.error("Task list not found!");
+            return;
+        }
     }
 
     clearTask() {
@@ -17,11 +19,11 @@ export class RenderTomato {
     }
 
     renderTask() {
-        const tasks = this.controller.loadTask();
-        console.log(tasks);
+        this.tasks = this.controller.loadTask();
+        console.log(this.tasks);
         this.clearTask();
 
-        tasks.forEach((task, index) => {
+        this.tasks.forEach((task, index) => {
             const taskItem = el("li.tasks__item", 
                 el("span.count-number", index + 1), 
                 el("button.tasks__text", task.text),
@@ -42,15 +44,7 @@ export class RenderTomato {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    // const controller = new Controller();
-    const container = document.querySelector(".tasks-container");
-  
-    if (!container) {
-        console.error("Container not found!");
-        return;
-    }
-
-    const renderTomato = new RenderTomato(container, controller);
+    const renderTomato = new RenderTomato();
     renderTomato.renderTask(); 
 });
 
