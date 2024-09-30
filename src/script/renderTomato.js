@@ -23,10 +23,6 @@ export class RenderTomato {
         this.clearTask();
 
         this.tasks.forEach((task, index) => {
-            // this.taskItem = document.createElement("li");
-            // this.taskItem.classList.add(".tasks__item");
-
-
             this.taskItem = el("li.tasks__item", 
                 el("span.count-number", index + 1), 
                 el("button.tasks__text", task.text),
@@ -45,20 +41,13 @@ export class RenderTomato {
         });
     }
     popupTaskMenu() {
+        this.popupBtn = document.querySelector(".tasks__button");
         this.popupMenu = el("div.popup.popup_active", 
             el("button.popup__button.popup__edit-button", "Редактировать"), 
             el("button.popup__button.popup__delete-button", "Удалить")
         );
-
-        //вмонтировать в нужный контейнер по клику
+        this.popupBtn.append(this.popupMenu);
+        console.log(this.popupBtn);
+        //вмонтировать в нужный контейнер по клику и исправить чтобы плашка была под каждым li
     }
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-    const renderTomato = new RenderTomato();
-    renderTomato.renderTask(); 
-});
-
-
-//найти и заменить класс контейнера на адекватный
-//проверить почему не удаляется старый список ul
