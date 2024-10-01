@@ -1,5 +1,3 @@
-import {View} from "./render";
-
 export class Controller {
     constructor(view) {
         this.view = view;

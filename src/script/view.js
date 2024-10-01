@@ -31,12 +31,30 @@ export class View {
         this.editBtn = document.querySelector(".popup__edit-button");
         console.log(this.editBtn);
 
+        this.body = document.querySelector("body");
+
+        this.body.addEventListener("click", this.handleClickOutsidePopup.bind(this));
+
         this.data = [];
         this.tasks = [];
         this.popup = null; 
+    }
 
-        this.body = document.querySelector("body");
-        this.body.addEventListener("click", this.handleDocumentClick.bind(this));
+    handleClickOutsidePopup(event) {
+        const isClickInside = (this.popupMenu && this.popupMenu.contains(event.target)) || 
+            (this.popupBtn && this.popupBtn.contains(event.target));
+        
+        if (!isClickInside) {
+            this.closePopup();
+        }
+    }
+    
+    closePopup() {
+        if (this.popupMenu) {
+            this.popupMenu.remove();
+            this.popupMenu = null;
+            this.body.removeEventListener("click", this.handleClickOutsidePopup.bind(this));
+        }
     }
 
     handleAddTask(event) {
@@ -64,19 +82,8 @@ export class View {
         this.renderTomato.popupTaskMenu();
         this.popup = document.querySelector(".popup_active");
         console.log(this.popup);
-    }
-
-    handleDocumentClick(event) {
-        if (this.popup && !this.popup.contains(event.target)) {
-            this.closePopup(); // прописать метод закрытия closePopup в controllerTomato;
-        }
-    }
-
-    closePopup() {
-        if (this.popup) {
-            this.popup.classList.toggle(".popup_active"); 
-            this.popup.style.display = "none";
-        }
+        this.popupMenu = this.popup;
+        this.popupBtn = event.currentTarget;
     }
 
     deleteBtnTask() {

@@ -1,7 +1,7 @@
 import "./view";
 import "./main";
-import { el, mount, setChildren } from 'redom';
-import { Controller } from './controller';
+import { el, setChildren } from "redom";
+import { Controller } from "./controller";
 
 export class RenderTomato {
     constructor() {
