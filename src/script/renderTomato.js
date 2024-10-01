@@ -47,7 +47,7 @@ export class RenderTomato {
             el("button.popup__button.popup__delete-button", "Удалить")
         );
         this.popupBtn.append(this.popupMenu);
-        console.log(this.popupBtn);
-        //вмонтировать в нужный контейнер по клику и исправить чтобы плашка была под каждым li
+
+        
     }
 }

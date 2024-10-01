@@ -11,6 +11,7 @@ export class View {
         this.controller = controller;
         this.renderTomato = new RenderTomato();
         this.renderTomato.renderTask();
+        // this.popup = null; 
 
         this.addButton = document.querySelector(".task-form__add-button");
         this.addButton.addEventListener("click", this.handleAddTask.bind(this));
@@ -25,19 +26,14 @@ export class View {
             btn.addEventListener("click", this.activeMenuTask.bind(this));
         });
 
-        this.deleteBtn = document.querySelector(".popup__delete-button");
-        console.log(this.deleteBtn);
-
-        this.editBtn = document.querySelector(".popup__edit-button");
-        console.log(this.editBtn);
-
         this.body = document.querySelector("body");
-
         this.body.addEventListener("click", this.handleClickOutsidePopup.bind(this));
 
         this.data = [];
         this.tasks = [];
-        this.popup = null; 
+        this.deleteBtn = null;
+        this.editBtn = null;
+        
     }
 
     handleClickOutsidePopup(event) {
@@ -84,16 +80,41 @@ export class View {
         console.log(this.popup);
         this.popupMenu = this.popup;
         this.popupBtn = event.currentTarget;
-    }
+        this.deleteBtn = document.querySelector(".popup__delete-button");
 
-    deleteBtnTask() {
-        this.controller.deleteTask();
+        const countNumberRow = document.querySelector(".count-number"); // как получить строку по которой был клик? почему все время попал на первую задачу?
+        console.log(countNumberRow);
+        const tabIndex = parseInt(countNumberRow.textContent) - 1;
+        console.log(tabIndex);
+        
+        if (this.deleteBtn) {
+            this.deleteBtn.addEventListener("click", () => {
+                this.controller.deleteTask(tabIndex);
+                this.closePopup();
+                this.renderTomato.renderTask();
+            });
+        }
+
+        this.editBtn = document.querySelector(".popup__edit-button");
+        console.log(this.editBtn);
+
+        // if (this.editBtn) {
+        //     this.editBtn.addEventListener("click", () => {
+        //         this.controller.editTask(tabIndex);
+        //         this.closePopup();
+        //         this.renderTomato.renderTask();
+        //     });
+        // }
     }
 }
 export class Controller {
     constructor(view) {
         this.view = view;
         this.tasks = this.loadTask();
+    }
+
+    generateId() {
+        return Math.floor(Math.random() * 9000) + 1000;
     }
     loadTask() {
         const taskJson = localStorage.getItem("tasks");
@@ -103,21 +124,24 @@ export class Controller {
         localStorage.setItem("tasks", JSON.stringify(this.tasks)); 
     }
     addTask(taskText, statusTask) {
-        const newTask = {text: taskText, status: statusTask};
+        const newTask = {text: taskText, status: statusTask, id: this.generateId()};
         if (!this.tasks) {
             this.tasks = [];
         }
         this.tasks.push(newTask);
         this.saveTask();
     }
-    deleteTask(countNumber) {
-        const index = this.tasks.findIndex(task => task.id === countNumber);
-        if (index !== -1) {
+    deleteTask(index) {
+        if (index >= 0 && index < this.tasks.length) {
             this.tasks.splice(index, 1);
-            this.saveTasks();
+            this.saveTask();
         } else {
-            console.error("Задача с таким номером не найдена.");
+            console.error("Задача с данным индексом не найдена.");
         }
+    }
+
+    editTask(index) {
+        // this.saveTask();
     }
 }
 
