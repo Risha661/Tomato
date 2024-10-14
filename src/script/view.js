@@ -19,6 +19,22 @@ export class View {
         this.priorityBtn = document.querySelector(".button-importance");
         this.priorityBtn.addEventListener("click", this.priorityHandleBtn.bind(this));
 
+        this.activeBtnTask = document.querySelectorAll(".tasks__text");
+        console.log(this.activeBtnTask);
+        this.activeBtnTask.forEach((btn, index) => {
+            btn.addEventListener('click', () => {
+                console.log('Кнопка с индексом:', index);
+                // Здесь вы можете вызвать вашу функцию и передать индекс
+                this.activeMenuTask.bind(this);
+            });
+        });
+
+        //перекинуть в textContent в шапку название задачи
+
+        this.startBtn = document.querySelector(".button-primary");
+        console.log(this.startBtn);
+        this.startBtn.addEventListener("click", this.activeTimerBtn.bind(this));
+
         this.popupBtns = document.querySelectorAll(".tasks__button");
         console.log(this.popupBtns);
         this.popupBtns.forEach(btn => {
@@ -34,6 +50,10 @@ export class View {
         this.deleteBtn = null;
         this.editBtn = null;
         
+    }
+
+    activeTimerBtn() {
+        //запуск счетчика каким-то образом, ага
     }
 
     handleClickOutsidePopup(event) {
@@ -85,7 +105,7 @@ export class View {
         const countNumberRow = document.querySelector(".count-number"); // как получить строку по которой был клик? почему все время попал на первую задачу?
         console.log(countNumberRow);
         const tabIndex = parseInt(countNumberRow.textContent) - 1;
-        console.log(tabIndex);
+        console.log(tabIndex + " tabindex localstorage");
         
         if (this.deleteBtn) {
             this.deleteBtn.addEventListener("click", () => {
@@ -98,13 +118,13 @@ export class View {
         this.editBtn = document.querySelector(".popup__edit-button");
         console.log(this.editBtn);
 
-        // if (this.editBtn) {
-        //     this.editBtn.addEventListener("click", () => {
-        //         this.controller.editTask(tabIndex);
-        //         this.closePopup();
-        //         this.renderTomato.renderTask();
-        //     });
-        // }
+        if (this.editBtn) {
+            this.editBtn.addEventListener("click", () => {
+                this.controller.editTask(tabIndex);
+                this.closePopup();
+                // this.renderTomato.renderTask();
+            });
+        }
     }
 }
 export class Controller {
@@ -141,7 +161,10 @@ export class Controller {
     }
 
     editTask(index) {
+        if (index >= 0 && index < this.tasks.length) {
+
         // this.saveTask();
+        }
     }
 }
 
