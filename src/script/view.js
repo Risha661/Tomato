@@ -22,10 +22,9 @@ export class View {
         this.activeBtnTask = document.querySelectorAll(".tasks__text");
         console.log(this.activeBtnTask);
         this.activeBtnTask.forEach((btn, index) => {
-            btn.addEventListener('click', () => {
-                console.log('Кнопка с индексом:', index);
-                // Здесь вы можете вызвать вашу функцию и передать индекс
-                this.activeMenuTask.bind(this);
+            btn.addEventListener("click", () => {
+                console.log("Кнопка с индексом:", index);
+                this.editTaskTimer();
             });
         });
 
@@ -37,10 +36,14 @@ export class View {
 
         this.popupBtns = document.querySelectorAll(".tasks__button");
         console.log(this.popupBtns);
-        this.popupBtns.forEach(btn => {
-            console.log(btn);
-            btn.addEventListener("click", this.activeMenuTask.bind(this));
-        });
+
+        this.popupBtns.forEach((btn, index) => {
+            btn.addEventListener("click", () => {
+                console.log("Строка с индексом:", index);
+                console.log(btn);
+                this.activeMenuTask(index); // Передаем индекс, строки, где сработала кнопка
+            });
+        });        
 
         this.body = document.querySelector("body");
         this.body.addEventListener("click", this.handleClickOutsidePopup.bind(this));
@@ -52,24 +55,25 @@ export class View {
         
     }
 
+    editTaskTimer() {}
+
     activeTimerBtn() {
         //запуск счетчика каким-то образом, ага
     }
 
     handleClickOutsidePopup(event) {
         const isClickInside = (this.popupMenu && this.popupMenu.contains(event.target)) || 
-            (this.popupBtn && this.popupBtn.contains(event.target));
-        
+                            (this.popupBtn && this.popupBtn.contains(event.target));
         if (!isClickInside) {
             this.closePopup();
         }
     }
     
     closePopup() {
-        if (this.popupMenu) {
-            this.popupMenu.remove();
+        if (this.popupMenu && this.popupMenu.classList.contains("popup_active")) {
+            this.popupMenu.classList.remove("popup_active");
+            this.body.removeEventListener("click", this.handleClickOutsidePopupBound);
             this.popupMenu = null;
-            this.body.removeEventListener("click", this.handleClickOutsidePopup.bind(this));
         }
     }
 
@@ -93,37 +97,39 @@ export class View {
         this.buttonElement = event.currentTarget;
     }
 
-    activeMenuTask(event) {
-        this.event = event;
+    activeMenuTask(index) {
         this.renderTomato.popupTaskMenu();
         this.popup = document.querySelector(".popup_active");
         console.log(this.popup);
-        this.popupMenu = this.popup;
+        
         this.popupBtn = event.currentTarget;
         this.deleteBtn = document.querySelector(".popup__delete-button");
-
-        const countNumberRow = document.querySelector(".count-number"); // как получить строку по которой был клик? почему все время попал на первую задачу?
+    
+        const countNumberRow = document.querySelectorAll(".count-number")[index]; // Получаем строку по индексу, чтобы понимать, с чем мы работаем
         console.log(countNumberRow);
-        const tabIndex = parseInt(countNumberRow.textContent) - 1;
-        console.log(tabIndex + " tabindex localstorage");
         
-        if (this.deleteBtn) {
-            this.deleteBtn.addEventListener("click", () => {
-                this.controller.deleteTask(tabIndex);
-                this.closePopup();
-                this.renderTomato.renderTask();
-            });
-        }
-
-        this.editBtn = document.querySelector(".popup__edit-button");
-        console.log(this.editBtn);
-
-        if (this.editBtn) {
-            this.editBtn.addEventListener("click", () => {
-                this.controller.editTask(tabIndex);
-                this.closePopup();
-                // this.renderTomato.renderTask();
-            });
+        if (countNumberRow) {
+            const tabIndex = parseInt(countNumberRow.textContent) - 1;
+            console.log(tabIndex + " tabindex localstorage");
+    
+            if (this.deleteBtn) {
+                this.deleteBtn.addEventListener("click", () => {
+                    this.controller.deleteTask(tabIndex);
+                    this.closePopup();
+                    this.renderTomato.renderTask();
+                });
+            }
+    
+            this.editBtn = document.querySelector(".popup__edit-button");
+            console.log(this.editBtn);
+    
+            if (this.editBtn) {
+                this.editBtn.addEventListener("click", () => {
+                    this.controller.editTask(tabIndex);
+                    this.closePopup();
+                    // this.renderTomato.renderTask();
+                });
+            }
         }
     }
 }
