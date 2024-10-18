@@ -20,27 +20,20 @@ export class View {
         this.priorityBtn.addEventListener("click", this.priorityHandleBtn.bind(this));
 
         this.activeBtnTask = document.querySelectorAll(".tasks__text");
-        console.log(this.activeBtnTask);
         this.activeBtnTask.forEach((btn, index) => {
             btn.addEventListener("click", () => {
-                console.log("Кнопка с индексом:", index);
-                this.editTaskTimer();
+                this.editTaskTimer(index);
             });
         });
 
         //перекинуть в textContent в шапку название задачи
-
         this.startBtn = document.querySelector(".button-primary");
         console.log(this.startBtn);
         this.startBtn.addEventListener("click", this.activeTimerBtn.bind(this));
-
         this.popupBtns = document.querySelectorAll(".tasks__button");
-        console.log(this.popupBtns);
 
         this.popupBtns.forEach((btn, index) => {
             btn.addEventListener("click", () => {
-                console.log("Строка с индексом:", index);
-                console.log(btn);
                 this.activeMenuTask(index); // Передаем индекс, строки, где сработала кнопка
             });
         });        
@@ -88,7 +81,8 @@ export class View {
             this.taskInput.value = "";
         } else {
             console.warn("Введите текст задачи.");
-        }
+        } 
+
     }
 
     priorityHandleBtn(event) {
@@ -100,13 +94,11 @@ export class View {
     activeMenuTask(index) {
         this.renderTomato.popupTaskMenu();
         this.popup = document.querySelector(".popup_active");
-        console.log(this.popup);
         
         this.popupBtn = event.currentTarget;
         this.deleteBtn = document.querySelector(".popup__delete-button");
     
         const countNumberRow = document.querySelectorAll(".count-number")[index]; // Получаем строку по индексу, чтобы понимать, с чем мы работаем
-        console.log(countNumberRow);
         
         if (countNumberRow) {
             const tabIndex = parseInt(countNumberRow.textContent) - 1;
@@ -127,7 +119,7 @@ export class View {
                 this.editBtn.addEventListener("click", () => {
                     this.controller.editTask(tabIndex);
                     this.closePopup();
-                    // this.renderTomato.renderTask();
+                    this.renderTomato.renderTask();
                 });
             }
         }
@@ -137,6 +129,9 @@ export class Controller {
     constructor(view) {
         this.view = view;
         this.tasks = this.loadTask();
+        this.editPlacehoderInput = document.querySelector(".input-primary");
+        this.editStatusBtn = document.querySelector(".button-importance");
+        console.log(this.editPlacehoderInput);
     }
 
     generateId() {
@@ -168,8 +163,29 @@ export class Controller {
 
     editTask(index) {
         if (index >= 0 && index < this.tasks.length) {
-
-        // this.saveTask();
+            const task = this.tasks[index];
+            this.taskStatus = task.status;
+            const taskText = task.text;
+            this.editPlacehoderInput.value = taskText;
+    
+            this.editStatusBtn.textContent = this.updateStatusButton();
+            this.currentEditIndex = index;
+        }
+    }
+    
+    updateStatusButton() {
+        if (!this.editStatusBtn) {
+            console.error("editStatusBtn is not initialized");
+            return;
+        }
+    
+        this.editStatusBtn.classList.remove('important', 'so-so', 'default');
+        if (this.taskStatus === "important") {
+            this.editStatusBtn.classList.add("important");
+        } else if (this.taskStatus === "so-so") {
+            this.editStatusBtn.classList.add("so-so");
+        } else {
+            this.editStatusBtn.classList.add("default");
         }
     }
 }
@@ -189,13 +205,11 @@ document.querySelector(".button-importance").addEventListener("click", ({target}
             target.classList.remove(imp[i]);
         }
     }
-    console.log(`Статус важности: ${statusTask}`);
 });
 
 document.addEventListener("DOMContentLoaded", () => {
     const rootElement = document.querySelector("#root");
     const body = document.body;
-    console.log(body);
     const controller = new Controller();
     controller.loadTask();
     const view = new View(rootElement, controller);

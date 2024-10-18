@@ -19,7 +19,6 @@ export class RenderTomato {
     }
     renderTask() {
         this.tasks = this.controller.loadTask();
-        console.log(this.tasks);
         this.clearTask();
 
         this.tasks.forEach((task, index) => {
@@ -46,8 +45,6 @@ export class RenderTomato {
             el("button.popup__button.popup__edit-button", "Редактировать"), 
             el("button.popup__button.popup__delete-button", "Удалить")
         );
-        this.popupBtn.append(this.popupMenu);
-
-        
+        this.popupBtn.append(this.popupMenu);    
     }
 }
