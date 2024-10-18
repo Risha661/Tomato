@@ -35,9 +35,15 @@ export class RenderTomato {
             } else {
                 this.taskItem.classList.add("default");
             }
-    
             this.taskList.appendChild(this.taskItem); 
         });
+    }
+
+    renderWindow(taskText, index) {
+        this.windowTask = document.querySelector(".window__panel-title");
+        this.windowTask.textContent = taskText;
+        this.numberTask = document.querySelector(".window__panel-task-text");
+        this.numberTask.textContent = `Задача №${index + 1}`;
     }
     popupTaskMenu() {
         this.popupBtn = document.querySelector(".tasks__button");

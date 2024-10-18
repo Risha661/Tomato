@@ -12,7 +12,7 @@ export class View {
         this.renderTomato = new RenderTomato();
         this.renderTomato.renderTask();
         // this.popup = null; 
-
+        
         this.addButton = document.querySelector(".task-form__add-button");
         this.addButton.addEventListener("click", this.handleAddTask.bind(this));
 
@@ -22,8 +22,10 @@ export class View {
         this.activeBtnTask = document.querySelectorAll(".tasks__text");
         this.activeBtnTask.forEach((btn, index) => {
             btn.addEventListener("click", () => {
-                this.editTaskTimer(index);
+                console.log(btn + index);
+                this.activeTimerBtn(index);
             });
+            
         });
 
         //перекинуть в textContent в шапку название задачи
@@ -50,7 +52,14 @@ export class View {
 
     editTaskTimer() {}
 
-    activeTimerBtn() {
+    activeTimerBtn(index) {
+        this.tasks = this.controller.loadTask();
+        const task = this.tasks[index];
+        const taskText = task.text;
+        console.log("текст задачи" + taskText);
+        this.renderTomato.renderWindow(taskText, index);
+       
+
         //запуск счетчика каким-то образом, ага
     }
 
@@ -170,6 +179,9 @@ export class Controller {
     
             this.editStatusBtn.textContent = this.updateStatusButton();
             this.currentEditIndex = index;
+            this.saveTask();
+        } else {
+            console.error("Задача с данным индексом не найдена.");
         }
     }
     
