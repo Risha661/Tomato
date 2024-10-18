@@ -1,18 +1,20 @@
 import "./timer";
 import "./renderTomato";
 import { RenderTomato } from "./renderTomato";
+import { ModelTomato } from "./model";
 
 export const imp = ["default", "important", "so-so"];
 export let count = 0;
 let statusTask = "default";
 export class View {
-    constructor(root, controller) {
+    constructor(root, controller, modelTomato) {
         this.root = root;
+        this.modelTomato = modelTomato;
+        console.log(this.modelTomato);
         this.controller = controller;
         this.renderTomato = new RenderTomato();
         this.renderTomato.renderTask();
         // this.popup = null; 
-        
         this.addButton = document.querySelector(".task-form__add-button");
         this.addButton.addEventListener("click", this.handleAddTask.bind(this));
 
@@ -22,7 +24,6 @@ export class View {
         this.activeBtnTask = document.querySelectorAll(".tasks__text");
         this.activeBtnTask.forEach((btn, index) => {
             btn.addEventListener("click", () => {
-                console.log(btn + index);
                 this.activeTimerBtn(index);
             });
             
@@ -31,9 +32,8 @@ export class View {
         //перекинуть в textContent в шапку название задачи
         this.startBtn = document.querySelector(".button-primary");
         console.log(this.startBtn);
-        this.startBtn.addEventListener("click", this.activeTimerBtn.bind(this));
-        this.popupBtns = document.querySelectorAll(".tasks__button");
 
+        this.popupBtns = document.querySelectorAll(".tasks__button");
         this.popupBtns.forEach((btn, index) => {
             btn.addEventListener("click", () => {
                 this.activeMenuTask(index); // Передаем индекс, строки, где сработала кнопка
@@ -47,7 +47,6 @@ export class View {
         this.tasks = [];
         this.deleteBtn = null;
         this.editBtn = null;
-        
     }
 
     editTaskTimer() {}
@@ -56,11 +55,41 @@ export class View {
         this.tasks = this.controller.loadTask();
         const task = this.tasks[index];
         const taskText = task.text;
-        console.log("текст задачи" + taskText);
+        const id = task.id;
+        console.log(id);
         this.renderTomato.renderWindow(taskText, index);
-       
 
+        this.startBtn.addEventListener("click", () => {
+            this.startTimerGo(id); // Передаем индекс, строки, где сработала кнопка
+        });
         //запуск счетчика каким-то образом, ага
+    }
+
+    startTimerGo(id) {
+        this.modelTomato.activateTask(id);
+        this.modelTomato.startTask(id); // Запускаем задачу из модели
+        this.startTimerDisplay(); // Запускаем отображение таймера
+    }
+
+    startTimerDisplay() {
+        const timerDisplay = document.querySelector(".window__timer-text");
+        let remainingTime = this.modelTomato.workTime; // Остальное время задачи
+
+        const updateTimer = () => {
+            const minutes = Math.floor(remainingTime / 60000);
+            const seconds = Math.floor((remainingTime % 60000) / 1000);
+            timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+            if (remainingTime <= 0) {
+                clearInterval(timerInterval);
+                timerDisplay.textContent = "Задача завершена!";
+            } else {
+                remainingTime -= 1000; // Уменьшаем оставшееся время на 1 секунду
+            }
+        };
+
+        updateTimer(); // Обновляем таймер в первый раз
+        const timerInterval = setInterval(updateTimer, 1000); // Обновляем каждую секунду
     }
 
     handleClickOutsidePopup(event) {
@@ -176,7 +205,9 @@ export class Controller {
             this.taskStatus = task.status;
             const taskText = task.text;
             this.editPlacehoderInput.value = taskText;
-    
+            this.btnReplaceOnEdit = document.querySelector(".task-form__add-button");
+            this.btnReplaceOnEdit.textContent = "Изменить";
+            this.btnReplaceOnEdit.style.backgroundColor = "rgb(45 155 98)";
             this.editStatusBtn.textContent = this.updateStatusButton();
             this.currentEditIndex = index;
             this.saveTask();
@@ -220,9 +251,10 @@ document.querySelector(".button-importance").addEventListener("click", ({target}
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+    const modelTomato = new ModelTomato();
     const rootElement = document.querySelector("#root");
     const body = document.body;
     const controller = new Controller();
     controller.loadTask();
-    const view = new View(rootElement, controller);
+    const view = new View(rootElement, controller, modelTomato);
 });
