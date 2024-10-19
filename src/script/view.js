@@ -6,6 +6,7 @@ import { ModelTomato } from "./model";
 export const imp = ["default", "important", "so-so"];
 export let count = 0;
 let statusTask = "default";
+let isTaskEdit = false;
 export class View {
     constructor(root, controller, modelTomato) {
         this.root = root;
@@ -60,12 +61,13 @@ export class View {
         this.renderTomato.renderWindow(taskText, index);
 
         this.startBtn.addEventListener("click", () => {
-            this.startTimerGo(id); // Передаем индекс, строки, где сработала кнопка
+            this.startTimerGo(id, task); // Передаем индекс, строки, где сработала кнопка
         });
         //запуск счетчика каким-то образом, ага
     }
 
-    startTimerGo(id) {
+    startTimerGo(id, task) {
+        this.modelTomato.addTask(task);
         this.modelTomato.activateTask(id);
         this.modelTomato.startTask(id); // Запускаем задачу из модели
         this.startTimerDisplay(); // Запускаем отображение таймера
@@ -73,18 +75,18 @@ export class View {
 
     startTimerDisplay() {
         const timerDisplay = document.querySelector(".window__timer-text");
-        let remainingTime = this.modelTomato.workTime; // Остальное время задачи
+        let remainingTime = this.modelTomato.workTime; // Оставшееся время задачи
 
         const updateTimer = () => {
             const minutes = Math.floor(remainingTime / 60000);
             const seconds = Math.floor((remainingTime % 60000) / 1000);
-            timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            timerDisplay.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
             if (remainingTime <= 0) {
                 clearInterval(timerInterval);
                 timerDisplay.textContent = "Задача завершена!";
             } else {
-                remainingTime -= 1000; // Уменьшаем оставшееся время на 1 секунду
+                remainingTime -= 1000;
             }
         };
 
@@ -112,15 +114,38 @@ export class View {
         event.preventDefault();
         this.taskInput = document.querySelector(".input-primary");
         this.taskText = this.taskInput.value;
+    
         if (this.taskText) {
             console.log(`Задача: ${this.taskText}`);
-            this.tasks.push(`Задача: ${this.taskText}, Приоритетность: ${statusTask}`);
-            this.controller.addTask(this.taskText, statusTask);
+            if (!isTaskEdit) {
+                this.tasks.push({ text: this.taskText, priority: statusTask });
+                this.controller.addTask(this.taskText, statusTask);
+                console.log("Задача добавлена.");
+                this.renderTomato.renderTask();
+            } else {
+                this.indexOld = this.controller.currentEditIndex;
+                this.tasks = this.controller.loadTask();
+                console.log(this.tasks);
+                console.log(this.indexOld);
+                
+                if (this.indexOld >= 0 && this.indexOld < this.tasks.length) {
+                    this.tasks[this.indexOld] = {
+                        text: this.taskText,
+                        status: statusTask,
+                    };
+                    console.log("Задача отредактирована.");
+                    localStorage.setItem("tasks", JSON.stringify(this.tasks));
+                    this.renderTomato.renderTask();
+                } else {
+                    console.error("Индекс редактирования вне диапазона");
+                    return; 
+                }
+            }
+
             this.taskInput.value = "";
         } else {
             console.warn("Введите текст задачи.");
-        } 
-
+        }
     }
 
     priorityHandleBtn(event) {
@@ -155,8 +180,10 @@ export class View {
     
             if (this.editBtn) {
                 this.editBtn.addEventListener("click", () => {
+                    isTaskEdit = true;
                     this.controller.editTask(tabIndex);
                     this.closePopup();
+                    this.renderTomato.greenEditBtn();
                     this.renderTomato.renderTask();
                 });
             }
@@ -165,6 +192,7 @@ export class View {
 }
 export class Controller {
     constructor(view) {
+        this.currentEditIndex = null;
         this.view = view;
         this.tasks = this.loadTask();
         this.editPlacehoderInput = document.querySelector(".input-primary");
@@ -205,12 +233,9 @@ export class Controller {
             this.taskStatus = task.status;
             const taskText = task.text;
             this.editPlacehoderInput.value = taskText;
-            this.btnReplaceOnEdit = document.querySelector(".task-form__add-button");
-            this.btnReplaceOnEdit.textContent = "Изменить";
-            this.btnReplaceOnEdit.style.backgroundColor = "rgb(45 155 98)";
             this.editStatusBtn.textContent = this.updateStatusButton();
             this.currentEditIndex = index;
-            this.saveTask();
+            // this.saveTask();
         } else {
             console.error("Задача с данным индексом не найдена.");
         }
@@ -222,7 +247,7 @@ export class Controller {
             return;
         }
     
-        this.editStatusBtn.classList.remove('important', 'so-so', 'default');
+        this.editStatusBtn.classList.remove("important", "so-so", "default");
         if (this.taskStatus === "important") {
             this.editStatusBtn.classList.add("important");
         } else if (this.taskStatus === "so-so") {

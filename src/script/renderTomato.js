@@ -38,6 +38,15 @@ export class RenderTomato {
             this.taskList.appendChild(this.taskItem); 
         });
     }
+    greenEditBtn() {
+        this.btnReplaceOnEdit = document.querySelector(".task-form__add-button");
+        this.btnReplaceOnEdit.textContent = "Изменить";
+        this.btnReplaceOnEdit.style.backgroundColor = "rgb(45 155 98)";
+    }
+    redAddBtn() {
+        this.btnReplaceOnEdit.textContent = "Добавить";
+        this.btnReplaceOnEdit.style.backgroundColor = "#ef1a13";
+    }
 
     renderWindow(taskText, index) {
         this.windowTask = document.querySelector(".window__panel-title");
