@@ -34,6 +34,9 @@ export class View {
         this.startBtn = document.querySelector(".button-primary");
         console.log(this.startBtn);
 
+        this.stopBtn = document.querySelector(".button-secondary"); // Добавляем кнопку остановки
+        this.stopBtn.style.display = "none"; // Скрываем кнопку остановки изначально
+
         this.popupBtns = document.querySelectorAll(".tasks__button");
         this.popupBtns.forEach((btn, index) => {
             btn.addEventListener("click", () => {
@@ -48,6 +51,9 @@ export class View {
         this.tasks = [];
         this.deleteBtn = null;
         this.editBtn = null;
+
+        this.timerInterval = null;
+        this.isRunning = false; 
     }
 
     editTaskTimer() {}
@@ -57,12 +63,11 @@ export class View {
         const task = this.tasks[index];
         const taskText = task.text;
         const id = task.id;
-        console.log(id);
         this.renderTomato.renderWindow(taskText, index);
 
-        this.startBtn.addEventListener("click", () => {
+        this.startBtn.onclick = () => {
             this.startTimerGo(id, task); // Передаем индекс, строки, где сработала кнопка
-        });
+        };
         //запуск счетчика каким-то образом, ага
     }
 
@@ -73,26 +78,50 @@ export class View {
         this.startTimerDisplay(); // Запускаем отображение таймера
     }
 
+
     startTimerDisplay() {
         const timerDisplay = document.querySelector(".window__timer-text");
         let remainingTime = this.modelTomato.workTime; // Оставшееся время задачи
-
+    
         const updateTimer = () => {
             const minutes = Math.floor(remainingTime / 60000);
             const seconds = Math.floor((remainingTime % 60000) / 1000);
             timerDisplay.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-
+    
             if (remainingTime <= 0) {
-                clearInterval(timerInterval);
+                clearInterval(this.timerInterval);
                 timerDisplay.textContent = "Задача завершена!";
+                this.stopBtn.style.display = "none";
+                this.isRunning = false;
             } else {
                 remainingTime -= 1000;
             }
         };
-
-        updateTimer(); // Обновляем таймер в первый раз
-        const timerInterval = setInterval(updateTimer, 1000); // Обновляем каждую секунду
+    
+        updateTimer();
+    
+        if (!this.isRunning) {
+            this.isRunning = true;
+            this.stopBtn.style.display = "block";
+    
+            this.timerInterval = setInterval(updateTimer, 50);
+    
+            this.stopBtn.onclick = () => {
+                clearInterval(this.timerInterval);
+                this.isRunning = false;
+                this.stopBtn.style.display = "none";
+                this.modelTomato.remainingTime = remainingTime; 
+            };
+    
+            this.startBtn.onclick = () => {
+                if (!this.isRunning) {
+                    remainingTime = this.modelTomato.remainingTime;
+                    this.startTimerDisplay();
+                }
+            };
+        }
     }
+
 
     handleClickOutsidePopup(event) {
         const isClickInside = (this.popupMenu && this.popupMenu.contains(event.target)) || 
@@ -125,10 +154,8 @@ export class View {
             } else {
                 this.indexOld = this.controller.currentEditIndex;
                 this.tasks = this.controller.loadTask();
-                console.log(this.tasks);
-                console.log(this.indexOld);
                 
-                if (this.indexOld >= 0 && this.indexOld < this.tasks.length) {
+                if (this.indexOld >= 0 && this.indexOld < this.tasks.length) { //редактируем в полученном сторедже задачу по индексу
                     this.tasks[this.indexOld] = {
                         text: this.taskText,
                         status: statusTask,
@@ -141,7 +168,6 @@ export class View {
                     return; 
                 }
             }
-
             this.taskInput.value = "";
         } else {
             console.warn("Введите текст задачи.");
