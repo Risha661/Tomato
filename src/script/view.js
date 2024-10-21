@@ -1,4 +1,4 @@
-import "./timer";
+// import "./timer";
 import "./renderTomato";
 import { RenderTomato } from "./renderTomato";
 import { ModelTomato } from "./model";
@@ -74,12 +74,14 @@ export class View {
     startTimerGo(id, task) {
         this.modelTomato.addTask(task);
         this.modelTomato.activateTask(id);
-        this.modelTomato.startTask(id); // Запускаем задачу из модели
-        this.startTimerDisplay(); // Запускаем отображение таймера
+        // this.modelTomato.startTask(id); // Запускаем задачу из модели
+        this.startTimerDisplay();
+
     }
 
 
     startTimerDisplay() {
+        console.log("1111111111111");
         const timerDisplay = document.querySelector(".window__timer-text");
         let remainingTime = this.modelTomato.workTime; // Оставшееся время задачи
     
@@ -90,9 +92,19 @@ export class View {
     
             if (remainingTime <= 0) {
                 clearInterval(this.timerInterval);
-                timerDisplay.textContent = "Задача завершена!";
-                this.stopBtn.style.display = "none";
+                timerDisplay.style.fontSize = "28px";
+                timerDisplay.style.textAlign = "center";
+                // timerDisplay.textContent = `Запуск перерыва на ${this.modelTomato.breakTime / 60000} минут`;
+                // this.stopBtn.style.display = "none";
                 this.isRunning = false;
+                this.modelTomato.startBreak();
+                setTimeout(() => {
+                    console.log(`Задача "${this.modelTomato.activeTask.text}" завершена!`);
+                    this.modelTomato.increaseCounter(this.modelTomato.activeTask.id);
+                    console.log(this.modelTomato.counter);
+                    
+                    this.modelTomato.startBreak(); // Запускаем перерыв после завершения задачи
+                }, this.workTime);
             } else {
                 remainingTime -= 1000;
             }
@@ -104,7 +116,7 @@ export class View {
             this.isRunning = true;
             this.stopBtn.style.display = "block";
     
-            this.timerInterval = setInterval(updateTimer, 50);
+            this.timerInterval = setInterval(updateTimer, 2);
     
             this.stopBtn.onclick = () => {
                 clearInterval(this.timerInterval);
