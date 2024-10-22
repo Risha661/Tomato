@@ -28,5 +28,5 @@ class Realize {
     }
 }
 
-const timer = new Realize("New timer");
+// const timer = new Realize("New timer");
 

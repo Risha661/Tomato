@@ -1,16 +1,16 @@
 // import "./timer";
-import "./renderTomato";
+import {RenderTomato} from "./renderTomato";
 import "./controller";
 import { View } from "./view";
-let flagTimer = "false";
 export class ModelTomato {
     static instance = null;
-    constructor({ workTime = 25, shortBreakTime = 5, longBreakTime = 15, tasks = [] } = {}, view) {
+    constructor({ workTime = 25, shortBreakTime = 5, longBreakTime = 15, tasks = [] } = {}, view, renderTomato) {
         if (ModelTomato.instance) {
             return ModelTomato.instance;
         }
         this.breakTime = 0;
         this.view = view;
+        this.renderTomato = renderTomato;
         this.workTime = workTime * 60 * 1000;
         this.shortBreakTime = shortBreakTime * 60 * 1000;
         this.longBreakTime = longBreakTime * 60 * 1000;
@@ -18,8 +18,8 @@ export class ModelTomato {
         this.activeTask = null;
         this.counter = 1;
         this.startBtn = document.querySelector(".button-primary");
+        this.stopBtnTimer = document.querySelector(".button-secondary");
         
-
         ModelTomato.instance = this;
     }
 
@@ -45,7 +45,6 @@ export class ModelTomato {
         console.log(`Запуск задачи: ${this.activeTask.text}`);
 
         setTimeout(() => {
-            console.log(`Задача "${this.activeTask.text}" завершена!`);
             this.increaseCounter(this.activeTask.id);
             this.startBreak();
         }, this.workTime);
@@ -59,117 +58,54 @@ export class ModelTomato {
         }
     }
 
-    shortBreakPause() {
+    startTimer(duration, titleText) {  
+        const existingTitle = document.querySelector(".timer-title");
+        if (existingTitle) {
+            existingTitle.remove();
+        }
         const timerTitle = document.createElement("h1");
+        timerTitle.className = "timer-title";
         timerTitle.style.fontSize = "28px";
         timerTitle.style.textAlign = "center";
-        timerTitle.textContent = "Короткий перерыв:";
-
-        const timerDuration = this.shortBreakTime;
-
+        timerTitle.textContent = titleText;
+        timerTitle.style.color = "#333333";
+    
         const timerDisplay = document.querySelector(".window__timer-text");
         timerDisplay.style.fontSize = "150px";
         timerDisplay.style.textAlign = "center";
-
         timerDisplay.parentNode.insertBefore(timerTitle, timerDisplay);
-        let remainingTime = timerDuration;
-        // timerDisplay.textContent = remainingTime / 60000;
+        let remainingTime = duration;
     
         const intervalId = setInterval(() => {
             remainingTime -= 1000;
+            this.stopBtnTimer.style.display = "none";
     
             const minutes = Math.floor(remainingTime / 60000);
             const seconds = Math.floor((remainingTime % 60000) / 1000);
-            timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            timerDisplay.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     
             if (remainingTime <= 0) {
                 timerTitle.style.display = "none";
                 clearInterval(intervalId);
+                this.stopBtnTimer.style.display = "block";
             }
-        }, 5);
+        }, 1000);
     }
-    // timerActivate(miliSeconds, title) {
-    //     console.log(title + " начат.");
-    //     const timerTitle = document.createElement("h1");
-    //     timerTitle.style.fontSize = "28px";
-    //     timerTitle.style.textAlign = "center";
-    //     timerTitle.textContent = title + ":";
-    //     const timerDuration = miliSeconds;
-    //     const timerDisplay = document.querySelector(".window__timer-text");
-    //     timerDisplay.style.fontSize = "150px";
-    //     timerDisplay.style.textAlign = "center";
-    //     timerDisplay.parentNode.insertBefore(timerTitle, timerDisplay);
-    //     let remainingTime = timerDuration;
-    //     const intervalId = setInterval(() => {
-    //         remainingTime -= 1000;
-    //         const minutes = Math.floor(remainingTime / 60000);
-    //         const seconds = Math.floor((remainingTime % 60000) / 1000);
-    //         timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-    
-    //         if (remainingTime <= 0) {
-    //             timerTitle.style.display = "none";
-    //             clearInterval(intervalId);
-    //         }
-    //     }, 5);
-    // }  
-    // подумать как объединить все таймеры
+
+    shortBreakPause() {
+        this.startTimer(this.shortBreakTime, "Короткий перерыв:");
+    }
+
     longBreakPause() {
-        console.log("Долгий перерыв начат.");
-        const timerTitle = document.createElement("h1");
-        timerTitle.style.fontSize = "28px";
-        timerTitle.style.textAlign = "center";
-        timerTitle.textContent = "Долгий перерыв:";
-
-        const timerDuration = this.longBreakTime;
-
-        const timerDisplay = document.querySelector(".window__timer-text");
-        timerDisplay.style.fontSize = "150px";
-        timerDisplay.style.textAlign = "center";
-
-        timerDisplay.parentNode.insertBefore(timerTitle, timerDisplay);
-        let remainingTime = timerDuration;
-        // timerDisplay.textContent = remainingTime / 60000;
-    
-        const intervalId = setInterval(() => {
-            remainingTime -= 1000;
-            const minutes = Math.floor(remainingTime / 60000);
-            const seconds = Math.floor((remainingTime % 60000) / 1000);
-            timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-    
-            if (remainingTime <= 0) {
-                timerTitle.style.display = "none";
-                clearInterval(intervalId);
-            }
-        }, 5);
+        this.startTimer(this.longBreakTime, "Длинный перерыв:");
     }
 
     startBreak() {
-        const timerDisplay = document.querySelector(".window__timer-text");
         const breakTime = (this.counter % 4 === 0) ? this.longBreakTime : this.shortBreakTime;
-    
-        timerDisplay.textContent = `Запуск перерыва на ${breakTime / 60000} минут`;
-
-
-    
         if (this.counter % 4 === 0) {
-            flagTimer = "false";
             this.longBreakPause();
         } else if (this.counter % 4 !== 0){
-            flagTimer = "true";
             this.shortBreakPause();
         }
-
-        // setTimeout(() => {
-            this.restartTask();
-        // }, breakTime);
-    }
-
-    restartTask() {
-        if (!this.activeTask) {
-            console.error("Нет активной задачи для перезапуска");
-            return;
-        }
-        console.log(`Перезапуск задачи: ${this.activeTask.text}`);
-        this.startTask();
     }
 }
