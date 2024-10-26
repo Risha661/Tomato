@@ -6,7 +6,7 @@ import "./script/render";
 import "./scss/index.scss";
 
 
-class Realize {
+class Script {
     constructor(name, counter = 0) {
         this.name = name;
         this.counter = counter;

@@ -20,7 +20,7 @@ export class RenderTomato {
     renderTask() {
         this.tasks = this.controller.loadTask();
         this.clearTask();
-
+        console.log(typeof(this.tasks));
         this.tasks.forEach((task, index) => {
             this.taskItem = el("li.tasks__item", 
                 el("span.count-number", index + 1), 

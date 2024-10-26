@@ -1,7 +1,13 @@
+import { ModelTomato } from "./model";
+import { View } from "./view";
+import "./view";
+import "./model";
+
 export class Controller {
-    constructor(view) {
+    constructor(view, modelTomato) {
         this.currentEditIndex = null;
         this.view = view;
+        this.modelTomato = modelTomato;
         this.tasks = this.loadTask();
         this.editPlacehoderInput = document.querySelector(".input-primary");
         this.editStatusBtn = document.querySelector(".button-importance");
@@ -17,8 +23,21 @@ export class Controller {
     saveTask() {
         localStorage.setItem("tasks", JSON.stringify(this.tasks)); 
     }
-    addTask(taskText, statusTask) {
-        const newTask = {text: taskText, status: statusTask, id: this.generateId()};
+
+    getIsRunnig() {
+        return this.view.isRunning;
+    }
+
+    addTask(taskText, statusTask, taskTime, runningFlag, counter) {
+        console.log(this.modelTomato);
+        const newTask = {
+            text: taskText, 
+            status: statusTask, 
+            id: this.generateId(),
+            flag: counter,
+            time: taskTime,
+            counter: runningFlag,
+        };
         if (!this.tasks) {
             this.tasks = [];
         }

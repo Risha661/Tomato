@@ -57,6 +57,8 @@ export class View {
         this.isRunning = false; 
     }
 
+
+
     activeTimerBtn(index) {
         this.tasks = this.controller.loadTask();
         const task = this.tasks[index];
@@ -71,68 +73,97 @@ export class View {
     startTimerGo(id, task) {
         this.modelTomato.addTask(task);
         this.modelTomato.activateTask(id);
-        this.startTimerDisplay();
+        this.startTimerTask();
+    }
+
+    startTimerTask() {
+        this.modelTomato.startTimer(this.modelTomato.workTime, true, "Рабочая сессия:");
     }
 
     startTimerDisplay() {
-        const timerDisplay = document.querySelector(".window__timer-text");
-        let remainingTime = this.modelTomato.workTime;
-        const timerTitle = document.createElement("h1");
-        timerTitle.style.fontSize = "28px";
-        timerTitle.style.textAlign = "center";
-        timerTitle.textContent = "Рабочая сессия";
-        timerTitle.style.color = "#333333";
-        timerDisplay.parentNode.insertBefore(timerTitle, timerDisplay);
+        // this.startTimerTask();
 
-        const formatTime = (time) => {
-            const minutes = Math.floor(time / 60000);
-            const seconds = Math.floor((time % 60000) / 1000);
-            return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-        };
+        // if (this.time !== this.modelTomato.workTime) {
+        //     this.time = this.modelTomato.activeTask.time;
+        //     console.log(this.time);
+        //     this.tasks = this.controller.loadTask(this.id);
+        //     remainingTime = this.time;
+        // } else {
+        //     remainingTime = this.modelTomato.workTime;
+        // }
+        
+        // const timerDisplay = document.querySelector(".window__timer-text");
+        // const timerTitle = document.createElement("h1");
+        // timerTitle.style.fontSize = "28px";
+        // timerTitle.style.textAlign = "center";
+        // timerTitle.textContent = "Рабочая сессия";
+        // timerTitle.style.color = "#333333";
+        // timerDisplay.parentNode.insertBefore(timerTitle, timerDisplay);
 
-        const updateTimer = () => {
-            timerDisplay.textContent = formatTime(remainingTime);
-            if (remainingTime <= 0) {
-                clearInterval(this.timerInterval);
-                timerDisplay.style.fontSize = "28px";
-                timerDisplay.style.textAlign = "center";
-                this.isRunning = false;
-                this.modelTomato.startBreak();
-                console.log(`Задача "${this.modelTomato.activeTask.text}" завершена!`);
-                if (timerTitle) {
-                    timerTitle.remove();
-                }
-                this.modelTomato.increaseCounter(this.modelTomato.activeTask.id);
-            } else {
-                remainingTime -= 1000;
-            }
-        };
+        // const formatTime = (time) => {
+        //     const minutes = Math.floor(time / 60000);
+        //     const seconds = Math.floor((time % 60000) / 1000);
+        //     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+        // };
+
+        // const updateTimer = () => {
+        //     timerDisplay.textContent = formatTime(remainingTime);
+        //     if (remainingTime <= 0) {
+        //         clearInterval(this.timerInterval);
+        //         timerDisplay.style.fontSize = "28px";
+        //         timerDisplay.style.textAlign = "center";
+        //         this.isRunning = false;
+        //         this.modelTomato.startBreak();
+        //         console.log(`Задача "${this.modelTomato.activeTask.text}" завершена!`);
+        //         if (timerTitle) {
+        //             timerTitle.remove();
+        //         }
+        //         this.modelTomato.increaseCounter(this.modelTomato.activeTask.id);
+        //     } else {
+        //         remainingTime -= 1000;
+        //     }
+        // };
     
-        updateTimer();
+        // updateTimer();
     
-        if (!this.isRunning) {
-            this.isRunning = true;
-            this.stopBtn.style.display = "block";
+        // if (!this.isRunning) {
+        //     this.isRunning = true;
+        //     this.stopBtn.style.display = "block";
     
-            this.timerInterval = setInterval(updateTimer, 1000);
+        //     this.timerInterval = setInterval(updateTimer, 2);
     
-            this.stopBtn.onclick = () => {
-                clearInterval(this.timerInterval);
-                this.isRunning = false;
-                this.stopBtn.style.display = "none";
-                this.modelTomato.remainingTime = remainingTime; 
-            };
+        //     this.stopBtn.onclick = () => {
+        //         this.id = this.modelTomato.activeTask.id;
+        //         this.tasks = this.controller.loadTask(this.id);
+        //         for(this.i = 0; this.i < this.tasks.length; this.i++){
+        //             if (this.tasks[this.i].id === this.id){
+        //                 this.tasks[this.i].time = remainingTime;
+        //                 this.tasks[this.i].counter = this.modelTomato.getCounter();
+        //                 this.tasks[this.i].flag = this.isRunning;
+        //                 break;
+        //             } 
+        //         }
+        //         localStorage.setItem("tasks", JSON.stringify(this.tasks));
+
+        //         clearInterval(this.timerInterval);
+        //         this.isRunning = false;
+        //         this.stopBtn.style.display = "none";
+        //         this.modelTomato.remainingTime = remainingTime; 
+        //     };
     
-            this.startBtn.onclick = () => {
-                if (!this.isRunning) {
-                    remainingTime = this.modelTomato.remainingTime;
-                    this.startTimerDisplay();
-                    if (timerTitle) {
-                        timerTitle.remove();
-                    }
-                }
-            };
-        }
+        //     this.startBtn.onclick = () => {
+        //         if (!this.isRunning) {
+        //             // this.tasks = this.controller.loadTask(this.id);
+        //             // remainingTime = this.tasks[this.i].time;
+        //             // console.log(remainingTime);
+                    
+        //             this.startTimerDisplay(remainingTime);
+        //             if (timerTitle) {
+        //                 timerTitle.remove();
+        //             }
+        //         }
+        //     };
+        // }
     }
 
     handleClickOutsidePopup(event) {
@@ -155,11 +186,21 @@ export class View {
         event.preventDefault();
         this.taskInput = document.querySelector(".input-primary");
         this.taskText = this.taskInput.value;
+        this.taskTime = this.modelTomato.workTime;
+        this.runningFlag = this.isRunning;
+        console.log(this.runningFlag);
+        this.counter = this.modelTomato.getCounter();
     
         if (this.taskText) {
             if (!isTaskEdit) {
-                this.tasks.push({ text: this.taskText, priority: statusTask });
-                this.controller.addTask(this.taskText, statusTask);
+                this.tasks.push({ 
+                    text: this.taskText, 
+                    priority: statusTask,
+                    time: this.taskTime,
+                    counter: this.counter,
+                    flag: this.runningFlag,
+                });
+                this.controller.addTask(this.taskText, statusTask, this.taskTime, this.counter, this.runningFlag);
                 this.renderTomato.renderTask();
             } else {
                 this.indexOld = this.controller.currentEditIndex;
@@ -241,7 +282,7 @@ document.querySelector(".button-importance").addEventListener("click", ({target}
     }
 });
 
-document.addEventListener("DOMContentLoaded", () => {
+export const start = document.addEventListener("DOMContentLoaded", () => {
     const modelTomato = new ModelTomato();
     const rootElement = document.querySelector("#root");
     const body = document.body;
