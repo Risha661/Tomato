@@ -1,18 +1,24 @@
 // import "./timer";
-
+import { Controller } from "./controller";
 import "./controller";
+import { View } from "./view";
+import "./view";
 
 
 let isWork = false;
+let timeExcept = 0;
+let intervalSet = 0;
+
 export class ModelTomato {
     static instance = null;
-    constructor({ workTime = 25, shortBreakTime = 5, longBreakTime = 15, tasks = [] } = {}, view, renderTomato) {
+    constructor({ workTime = 25, shortBreakTime = 5, longBreakTime = 15, tasks = [] } = {}, view, controller) {
         if (ModelTomato.instance) {
             return ModelTomato.instance;
         }
         this.breakTime = 0;
         this.view = view;
-        this.renderTomato = renderTomato;
+        console.log(this.view);
+        this.controller = controller;
         this.workTime = workTime * 60 * 1000;
         this.shortBreakTime = shortBreakTime * 60 * 1000;
         this.longBreakTime = longBreakTime * 60 * 1000;
@@ -22,6 +28,13 @@ export class ModelTomato {
         this.isRunning = false;
         this.startBtn = document.querySelector(".button-primary");
         this.stopBtnTimer = document.querySelector(".button-secondary");
+        this.intervalId = 0;
+        
+
+        this.startBtn = document.querySelector(".button-primary");
+
+        this.stopBtn = document.querySelector(".button-secondary");
+        this.stopBtn.style.display = "none";
         
         ModelTomato.instance = this;
     }
@@ -75,6 +88,10 @@ export class ModelTomato {
         return this.counter;
     }
 
+    getTime() {
+        return timeExcept;
+    }
+
     startTimer(time, isWork, titleText) {  
         console.log(isWork);
         const existingTitle = document.querySelector(".timer-title");
@@ -94,8 +111,9 @@ export class ModelTomato {
         timerDisplay.parentNode.insertBefore(timerTitle, timerDisplay);
         let remainingTime = time;
     
-        const intervalId = setInterval(() => {
+        this.intervalId = setInterval(() => {
             remainingTime -= 1000;
+            timeExcept = remainingTime;
             this.stopBtnTimer.style.display = "none";
     
             const minutes = Math.floor(remainingTime / 60000);
@@ -103,9 +121,19 @@ export class ModelTomato {
             timerDisplay.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     
             if (isWork === true) {
-                console.log("МЫ ЗДЕСЬ")
+                this.stopBtn.style.display = "block";
+                console.log("МЫ ЗДЕСЬ");
+                // if (this.stopBtn) {
+                //     this.stopBtn.onclick = () => {
+                //         clearInterval(intervalId);
+                //         this.isRunning = false;
+                //         this.stopBtn.style.display = "none";
+                //         this.remainingTime = this.getCounter(); 
+                //     }
+                // }
+
                 if (remainingTime <= 0) {
-                    clearInterval(intervalId);
+                    clearInterval( this.intervalId);
                     timerDisplay.style.fontSize = "28px";
                     timerDisplay.style.textAlign = "center";
                     this.isRunning = false;
@@ -115,12 +143,21 @@ export class ModelTomato {
                         timerTitle.remove();
                     }
                     this.increaseCounter(this.activeTask.id);
+                    this.id = this.activeTask.id;
+                    this.tasks = this.controller.loadTask(this.id);
+                    for(this.i = 0; this.i < this.tasks.length; this.i++){
+                        if (this.tasks[this.i].id === this.id){
+                            this.tasks[this.i].time = this.workTime;
+                            break;
+                        } 
+                    }
+                    localStorage.setItem("tasks", JSON.stringify(this.tasks));
                 }
             } else {
                 if (remainingTime <= 0) {
-                    console.log("ПАУЗА")
+                    console.log("ПАУЗА");
                     timerTitle.style.display = "none";
-                    clearInterval(intervalId);
+                    clearInterval(this.intervalId);
                     this.stopBtnTimer.style.display = "block";
                 }
             }
@@ -136,7 +173,7 @@ export class ModelTomato {
     }
 
     startBreak() {
-        const breakTime = (this.counter % 4 === 0) ? this.longBreakTime : this.shortBreakTime;
+        this.breakTime = (this.counter % 4 === 0) ? this.longBreakTime : this.shortBreakTime;
         if (this.counter % 4 === 0) {
             this.longBreakPause();
         } else if (this.counter % 4 !== 0){
