@@ -16,7 +16,6 @@ export class ModelTomato {
         }
         this.breakTime = 0;
         this.view = view;
-        console.log(this.view);
         this.controller = controller;
         this.workTime = workTime * 60 * 1000;
         this.shortBreakTime = shortBreakTime * 60 * 1000;
@@ -71,7 +70,6 @@ export class ModelTomato {
 
     getTimeTask() {
         this.time = this.activeTask.time;
-        console.log(this.time);
         this.tasks = this.controller.loadTask(this.id);
         this.remainingTime = this.time;
     }
@@ -91,7 +89,6 @@ export class ModelTomato {
     }
 
     startTimer(time, isWork, titleText) {  
-        console.log(isWork);
         const existingTitle = document.querySelector(".timer-title");
         if (existingTitle) {
             existingTitle.remove();
@@ -149,7 +146,7 @@ export class ModelTomato {
                     this.stopBtnTimer.style.display = "block";
                 }
             }
-        }, 2);
+        }, 1000);
     }
 
     shortBreakPause() {
