@@ -7,7 +7,6 @@ import "./view";
 
 let isWork = false;
 let timeExcept = 0;
-let intervalSet = 0;
 
 export class ModelTomato {
     static instance = null;
@@ -32,7 +31,6 @@ export class ModelTomato {
         
 
         this.startBtn = document.querySelector(".button-primary");
-
         this.stopBtn = document.querySelector(".button-secondary");
         this.stopBtn.style.display = "none";
         
@@ -122,15 +120,6 @@ export class ModelTomato {
     
             if (isWork === true) {
                 this.stopBtn.style.display = "block";
-                console.log("МЫ ЗДЕСЬ");
-                // if (this.stopBtn) {
-                //     this.stopBtn.onclick = () => {
-                //         clearInterval(intervalId);
-                //         this.isRunning = false;
-                //         this.stopBtn.style.display = "none";
-                //         this.remainingTime = this.getCounter(); 
-                //     }
-                // }
 
                 if (remainingTime <= 0) {
                     clearInterval( this.intervalId);
@@ -155,7 +144,6 @@ export class ModelTomato {
                 }
             } else {
                 if (remainingTime <= 0) {
-                    console.log("ПАУЗА");
                     timerTitle.style.display = "none";
                     clearInterval(this.intervalId);
                     this.stopBtnTimer.style.display = "block";
@@ -180,17 +168,4 @@ export class ModelTomato {
             this.shortBreakPause();
         }
     }
-
-        // startTask() {
-    //     if (!this.activeTask) {
-    //         console.error("Нет активной задачи для запуска");
-    //         return;
-    //     }
-    //     console.log(`Запуск задачи: ${this.activeTask.text}`);
-
-    //     setTimeout(() => {
-    //         this.increaseCounter(this.activeTask.id);
-    //         this.startBreak();
-    //     }, this.workTime);
-    // }
 }

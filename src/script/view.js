@@ -1,7 +1,7 @@
 // import "./timer";
 import "./renderTomato";
 import { RenderTomato } from "./renderTomato";
-import { ModelTomato } from "./model";
+import { ModelTomato } from "./modeltomato";
 import { Controller } from "./controller";
 
 export const imp = ["default", "important", "so-so"];
@@ -9,7 +9,7 @@ export let count = 0;
 let statusTask = "default";
 let isTaskEdit = false;
 
-let isStart = false;
+// let isStart = false;
 export class View {
     constructor(root, controller, modelTomato) {
         this.root = root;
@@ -50,16 +50,10 @@ export class View {
             if(this.startBtn) {
                 this.startBtn.onclick = () => {
                     this.isActiveTask = false;
-                    console.log("НАЖАЛИ ПЕРВЫЙ");
                     const time = this.getLocalTime();
                     this.modelTomato.startTimer(time, true, "Рабочая сессия:");
                 };
             }
-        };
-
-        this.startBtn.onclick = () => {
-            // this.isActiveTask === false;
-            // this.getTimeContinue();
         };
 
         this.popupBtns = document.querySelectorAll(".tasks__button");
@@ -89,7 +83,6 @@ export class View {
         const id = task.id;
         this.renderTomato.renderWindow(taskText, index);
         this.startBtn.onclick = () => {
-            console.log("НАЖАЛИ ПЕРВЫЙ");
             this.startTimerGo(id, task);
         };
         this.isActiveTask = false; 
@@ -105,99 +98,10 @@ export class View {
         this.modelTomato.startTimer(this.modelTomato.workTime, true, "Рабочая сессия:");
     }
 
-    startTimerDisplay() {
-        // this.startTimerTask();
-
-        // if (this.time !== this.modelTomato.workTime) {
-        //     this.time = this.modelTomato.activeTask.time;
-        //     console.log(this.time);
-        //     this.tasks = this.controller.loadTask(this.id);
-        //     remainingTime = this.time;
-        // } else {
-        //     remainingTime = this.modelTomato.workTime;
-        // }
-        
-        // const timerDisplay = document.querySelector(".window__timer-text");
-        // const timerTitle = document.createElement("h1");
-        // timerTitle.style.fontSize = "28px";
-        // timerTitle.style.textAlign = "center";
-        // timerTitle.textContent = "Рабочая сессия";
-        // timerTitle.style.color = "#333333";
-        // timerDisplay.parentNode.insertBefore(timerTitle, timerDisplay);
-
-        // const formatTime = (time) => {
-        //     const minutes = Math.floor(time / 60000);
-        //     const seconds = Math.floor((time % 60000) / 1000);
-        //     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-        // };
-
-        // const updateTimer = () => {
-        //     timerDisplay.textContent = formatTime(remainingTime);
-        //     if (remainingTime <= 0) {
-        //         clearInterval(this.timerInterval);
-        //         timerDisplay.style.fontSize = "28px";
-        //         timerDisplay.style.textAlign = "center";
-        //         this.isRunning = false;
-        //         this.modelTomato.startBreak();
-        //         console.log(`Задача "${this.modelTomato.activeTask.text}" завершена!`);
-        //         if (timerTitle) {
-        //             timerTitle.remove();
-        //         }
-        //         this.modelTomato.increaseCounter(this.modelTomato.activeTask.id);
-        //     } else {
-        //         remainingTime -= 1000;
-        //     }
-        // };
-    
-        // updateTimer();
-    
-        // if (!this.isRunning) {
-        //     this.isRunning = true;
-        //     this.stopBtn.style.display = "block";
-    
-        //     this.timerInterval = setInterval(updateTimer, 2);
-    
-        //     this.stopBtn.onclick = () => {
-        //         this.id = this.modelTomato.activeTask.id;
-        //         this.tasks = this.controller.loadTask(this.id);
-        //         for(this.i = 0; this.i < this.tasks.length; this.i++){
-        //             if (this.tasks[this.i].id === this.id){
-        //                 this.tasks[this.i].time = remainingTime;
-        //                 this.tasks[this.i].counter = this.modelTomato.getCounter();
-        //                 this.tasks[this.i].flag = this.isRunning;
-        //                 break;
-        //             } 
-        //         }
-        //         localStorage.setItem("tasks", JSON.stringify(this.tasks));
-
-        //         clearInterval(this.timerInterval);
-        //         this.isRunning = false;
-        //         this.stopBtn.style.display = "none";
-        //         this.modelTomato.remainingTime = remainingTime; 
-        //     };
-    
-        //     this.startBtn.onclick = () => {
-        //         if (!this.isRunning) {
-        //             // this.tasks = this.controller.loadTask(this.id);
-        //             // remainingTime = this.tasks[this.i].time;
-        //             // console.log(remainingTime);
-                    
-        //             this.startTimerDisplay(remainingTime);
-        //             if (timerTitle) {
-        //                 timerTitle.remove();
-        //             }
-        //         }
-        //     };
-        // }
-    }
-
-
     stopByTask() {
         this.stopBtn.onclick = () => {
             this.id = this.modelTomato.activeTask.id;
-            console.log(this.id);
             this.tasks = this.controller.loadTask(this.id);
-            console.log(this.tasks);
             for(this.i = 0; this.i < this.tasks.length; this.i++){
                 if (this.tasks[this.i].id === this.id){
                     this.tasks[this.i].time = this.modelTomato.getTime();
@@ -238,7 +142,6 @@ export class View {
         this.taskText = this.taskInput.value;
         this.taskTime = this.modelTomato.workTime;
         this.runningFlag = this.isRunning;
-        console.log(this.runningFlag);
         this.counter = this.modelTomato.getCounter();
     
         if (this.taskText) {
@@ -282,15 +185,11 @@ export class View {
     }
 
     getViewStop() {
-        console.log("МЫ В СТОПЕ");
         this.id = this.modelTomato.activeTask.id;
-        console.log(this.id);
         this.tasks = this.controller.loadTask(this.id);
-        console.log(this.tasks);
         for(this.i = 0; this.i < this.tasks.length; this.i++){
             if (this.tasks[this.i].id === this.id){
                 this.tasks[this.i].time = this.modelTomato.getTime();
-                console.log(this.tasks[this.i].time);
                 this.tasks[this.i].counter = this.modelTomato.getCounter();
                 this.tasks[this.i].flag = this.modelTomato.isRunning;
                 break;
@@ -363,7 +262,4 @@ export const start = document.addEventListener("DOMContentLoaded", () => {
 
     const rootElement = document.querySelector("#root");
     const body = document.body;
-
-
-
 });

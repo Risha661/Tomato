@@ -1,7 +1,7 @@
-import { ModelTomato } from "./model";
+import { ModelTomato } from "./modeltomato";
 import { View } from "./view";
 import "./view";
-import "./model";
+import "./modeltomato";
 
 export class Controller {
     constructor(view, modelTomato) {
